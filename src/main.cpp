@@ -38,7 +38,7 @@ void takePhoto(int number) {
  * adds the carrier of the IR signal.
  * @param pulseTime the length of the pulse in mikroseconds
  */
-void pulseON(int pulseTime) {
+void pulseOn(int pulseTime) {
 	unsigned long endPulse = micros() + pulseTime;	// create the microseconds to pulse for
 	while(micros() < endPulse) {
 		digitalWrite(IRLED, HIGH);		// turn IR on
@@ -49,10 +49,10 @@ void pulseON(int pulseTime) {
 }
 
 /**
- * the counterpart to pulseON
+ * the counterpart to pulseOn
  * @param pulseTime the length of the pulse in mikroseconds
  */
-void pulseOFF(int pulseTime) {
+void pulseOff(int pulseTime) {
 	unsigned long endDelay = micros() + pulseTime;	 // create the microseconds to delay for
 	while(micros() < endDelay);
 }
@@ -62,14 +62,14 @@ void pulseOFF(int pulseTime) {
  */
 void takePicture() {
 	for (int i=0; i < 2; i++) {	// loop the signal twice.
-		pulseON(2000);			// pulse for 2000 uS (Microseconds)
-		pulseOFF(27850);		// turn pulse off for 27850 us
-		pulseON(400);			// and so on
-		pulseOFF(1580);
-		pulseON(400);
-		pulseOFF(3580);
-		pulseON(400);
-		pulseOFF(63200);
+		pulseOn(2000);			// pulse for 2000 uS (Microseconds)
+		pulseOff(27850);		// turn pulse off for 27850 us
+		pulseOn(400);			// and so on
+		pulseOff(1580);
+		pulseOn(400);
+		pulseOff(3580);
+		pulseOn(400);
+		pulseOff(63200);
 	}
 }
 
@@ -94,6 +94,6 @@ void loop () {
 	bool film = lichtSchranke ();
 	if (film) {
 		stepperMotor();
-		takePhoto(1);
+		takePhoto(1); // here you can change how many Photos to make of every frame
 	}
 }
