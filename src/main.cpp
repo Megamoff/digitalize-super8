@@ -1,4 +1,5 @@
 #include "Arduino.h"
+
 #define FILM_PIN 2
 
 // Stepper
@@ -13,38 +14,36 @@
 #define INTERVAL_TIME 1000
 
 void setup() {
-	
-	//Pin setup
 	pinMode(IRLED, OUTPUT);			// IR Transmitter
 	pinMode(ENABLE_PIN, OUTPUT);	// Enable
 	pinMode(DIR_PIN, OUTPUT);		// Richtung
 	pinMode(STEP_PIN, OUTPUT);		// Step
 
-	digitalWrite(ENABLE_PIN, LOW);	// Stepper anschalten
-	digitalWrite(DIR_PIN, HIGH);	// Stepper im Uhrzeigersinn
+	digitalWrite(ENABLE_PIN, LOW);	// Enable stepper
+	digitalWrite(DIR_PIN, HIGH);	// Stepper will turn clockwise
 }
 
 /**
  * @param number number of photos to be taken
  */
-void takePhoto(int number) {
+void captureFrame(int number) {
 	for(int i = 0; i < number; i++) {
-		takePicture();				// take the picture
-		delay(INTERVAL_TIME);		// delay in milliseconds which allows us to do timelapse photography - 1 second = 1000 milliseconds
+		takePhoto();			// take the picture
+		delay(INTERVAL_TIME);	// delay in milliseconds which allows us to do timelapse photography
 	}
 }
 
 /**
- * adds the carrier of the IR signal.
+ * adds the carrier(~38kHz) of the IR signal.
  * @param pulseTime the length of the pulse in mikroseconds
  */
 void pulseOn(int pulseTime) {
 	unsigned long endPulse = micros() + pulseTime;	// create the microseconds to pulse for
 	while(micros() < endPulse) {
-		digitalWrite(IRLED, HIGH);		// turn IR on
-		delayMicroseconds(13);			// half the clock cycle for 38Khz (26.32×10-6s) - e.g. the 'on' part of our wave
-		digitalWrite(IRLED, LOW);		// turn IR off
-		delayMicroseconds(13);			// delay for the other half of the cycle to generate wave/ oscillation
+		digitalWrite(IRLED, HIGH);
+		delayMicroseconds(13);
+		digitalWrite(IRLED, LOW);
+		delayMicroseconds(13);
 	}
 }
 
@@ -60,11 +59,11 @@ void pulseOff(int pulseTime) {
 /**
  * trigger the camera
  */
-void takePicture() {
+void takePhoto() {
 	for (int i=0; i < 2; i++) {	// loop the signal twice.
-		pulseOn(2000);			// pulse for 2000 uS (Microseconds)
-		pulseOff(27850);		// turn pulse off for 27850 us
-		pulseOn(400);			// and so on
+		pulseOn(2000);
+		pulseOff(27850);
+		pulseOn(400);
 		pulseOff(1580);
 		pulseOn(400);
 		pulseOff(3580);
@@ -73,27 +72,27 @@ void takePicture() {
 	}
 }
 
-void stepperMotor () {
+void nextFrame() {
 	for(int stepCounter = 0; stepCounter < STEPS; stepCounter++) {
-		digitalWrite(STEP_PIN,HIGH);
+		digitalWrite(STEP_PIN, HIGH);
 		delayMicroseconds(500);
-		digitalWrite(STEP_PIN,LOW);
+		digitalWrite(STEP_PIN, LOW);
 		delayMicroseconds(500);
 	}
 }
 
 /**
- * @return true when film ended, false else
+ * @return false when film ended, true else
  */
-bool lichtSchranke () {
+bool lichtSchranke() {
 	bool film = digitalRead(FILM_PIN); 
 	return film;
 }
 
 void loop () {
-	bool film = lichtSchranke ();
-	if (film) {
-		stepperMotor();
-		takePhoto(1); // here you can change how many Photos to make of every frame
+	bool film = lichtSchranke();
+	if(film) {
+		nextFrame();
+		captureFrame(1);	// here you can change how many Photos to make of every frame
 	}
 }
