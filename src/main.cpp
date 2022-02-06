@@ -34,7 +34,7 @@ void captureFrame(int number) {
 }
 
 void pulseOn(int pulseTime) {
-	unsigned long endPulse = micros() + pulseTime;	// create the microseconds to pulse for
+	long endPulse = micros() + pulseTime;	// create the microseconds to pulse for
 	while(micros() < endPulse) {
 		digitalWrite(IRLED, HIGH);
 		delayMicroseconds(13);
@@ -44,7 +44,7 @@ void pulseOn(int pulseTime) {
 }
 
 void pulseOff(int pulseTime) {
-	unsigned long endDelay = micros() + pulseTime;	 // create the microseconds to delay for
+	long endDelay = micros() + pulseTime;	 // create the microseconds to delay for
 	while(micros() < endDelay);
 }
 
@@ -63,9 +63,9 @@ void takePhoto() {
 
 void nextFrame() {
 	int stepCounter = 0;
-	while(stepCounter < STEPS || digitalRead(LIGHT_BARRIER_PIN)){
-		digitalWrite(STEP_PIN, HIGH);
-		delayMicroseconds(1000);
+	while(stepCounter < STEPS || digitalRead(LIGHT_BARRIER_PIN)){	// 199 Steps are one full revolution. We do 190 and until
+		digitalWrite(STEP_PIN, HIGH);								// the shutter is open. This prevents desyncronization
+		delayMicroseconds(1000);									// by missed steps
 		digitalWrite(STEP_PIN, LOW);
 		delayMicroseconds(1000);
 		stepCounter++;
