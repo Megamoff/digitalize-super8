@@ -24,9 +24,4 @@ void takePhoto();
 
 void nextFrame();
 
-/**
- * @return false when film ended, true else
- */
-bool lichtSchranke();
-
 void loop ();

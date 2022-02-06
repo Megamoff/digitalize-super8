@@ -1,13 +1,13 @@
 #include "Arduino.h"
 #include "main.h"
 
-#define FILM_PIN 2
+#define LIGHT_BARRIER_PIN 2
 
 // Stepper
 #define DIR_PIN 4
 #define STEP_PIN 5
 #define ENABLE_PIN 6
-#define STEPS 199
+#define STEPS 190
 
 // IR Remote
 #define IRLED 11
@@ -19,6 +19,8 @@ void setup() {
 	pinMode(ENABLE_PIN, OUTPUT);	// Enable
 	pinMode(DIR_PIN, OUTPUT);		// Richtung
 	pinMode(STEP_PIN, OUTPUT);		// Step
+
+	pinMode(LIGHT_BARRIER_PIN, INPUT);
 
 	digitalWrite(ENABLE_PIN, LOW);	// Enable stepper
 	digitalWrite(DIR_PIN, HIGH);	// Stepper will turn clockwise
@@ -60,23 +62,17 @@ void takePhoto() {
 }
 
 void nextFrame() {
-	for(int stepCounter = 0; stepCounter < STEPS; stepCounter++) {
+	int stepCounter = 0;
+	while(stepCounter < STEPS || digitalRead(LIGHT_BARRIER_PIN)){
 		digitalWrite(STEP_PIN, HIGH);
 		delayMicroseconds(1000);
 		digitalWrite(STEP_PIN, LOW);
 		delayMicroseconds(1000);
+		stepCounter++;
 	}
-}
-
-bool lichtSchranke() {
-	bool film = digitalRead(FILM_PIN); 
-	return film;
 }
 
 void loop () {
-	bool film = lichtSchranke();
-	if(film) {
-		nextFrame();
-		captureFrame(1);	// here you can change how many Photos to make of every frame
-	}
+	nextFrame();
+	captureFrame(1);	// here you can change how many Photos to make of every frame
 }
