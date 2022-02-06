@@ -1,4 +1,5 @@
 #include "Arduino.h"
+#include "main.h"
 
 #define FILM_PIN 2
 
@@ -23,9 +24,6 @@ void setup() {
 	digitalWrite(DIR_PIN, HIGH);	// Stepper will turn clockwise
 }
 
-/**
- * @param number number of photos to be taken
- */
 void captureFrame(int number) {
 	for(int i = 0; i < number; i++) {
 		takePhoto();			// take the picture
@@ -33,10 +31,6 @@ void captureFrame(int number) {
 	}
 }
 
-/**
- * adds the carrier(~38kHz) of the IR signal.
- * @param pulseTime the length of the pulse in mikroseconds
- */
 void pulseOn(int pulseTime) {
 	unsigned long endPulse = micros() + pulseTime;	// create the microseconds to pulse for
 	while(micros() < endPulse) {
@@ -47,18 +41,11 @@ void pulseOn(int pulseTime) {
 	}
 }
 
-/**
- * the counterpart to pulseOn
- * @param pulseTime the length of the pulse in mikroseconds
- */
 void pulseOff(int pulseTime) {
 	unsigned long endDelay = micros() + pulseTime;	 // create the microseconds to delay for
 	while(micros() < endDelay);
 }
 
-/**
- * trigger the camera
- */
 void takePhoto() {
 	for (int i=0; i < 2; i++) {	// loop the signal twice.
 		pulseOn(2000);
@@ -75,15 +62,12 @@ void takePhoto() {
 void nextFrame() {
 	for(int stepCounter = 0; stepCounter < STEPS; stepCounter++) {
 		digitalWrite(STEP_PIN, HIGH);
-		delayMicroseconds(500);
+		delayMicroseconds(1000);
 		digitalWrite(STEP_PIN, LOW);
-		delayMicroseconds(500);
+		delayMicroseconds(1000);
 	}
 }
 
-/**
- * @return false when film ended, true else
- */
 bool lichtSchranke() {
 	bool film = digitalRead(FILM_PIN); 
 	return film;
