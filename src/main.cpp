@@ -12,7 +12,6 @@
 
 // IR Remote
 #define IRLED 11
-#define DELAY_TIME 7500
 #define INTERVAL_TIME 1000
 
 void setup() {
@@ -64,19 +63,19 @@ void takePhoto() {
 }
 
 void nextFrame() {
-	int stepCounter = 0;
-	while(stepCounter < STEPS || digitalRead(LIGHT_BARRIER_PIN)){	// 199 Steps are one full revolution. We do 190 and until
-		digitalWrite(STEP_PIN, HIGH);								// the shutter is open. This prevents desyncronization
-		delayMicroseconds(1000);									// by missed steps
+	// 199 Steps are one full revolution. We do 190 and until the shutter is open again.
+	// This prevents desyncronization by missed steps
+	for(int stepCounter = 0; stepCounter < STEPS || digitalRead(LIGHT_BARRIER_PIN); stepCounter++){
+		digitalWrite(STEP_PIN, HIGH);
+		delayMicroseconds(1000);
 		digitalWrite(STEP_PIN, LOW);
 		delayMicroseconds(1000);
-		stepCounter++;
 	}
 }
 
 void loop () {
 	int film = analogRead(FILM_PIN);
-//	Serial.println(film);
+//	Serial.println(film);	// print brightness for adjustment
 	if(film > 150) {
 		nextFrame();
 		captureFrame(1);	// here you can change how many Photos to make of every frame
