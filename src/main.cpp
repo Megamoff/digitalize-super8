@@ -13,7 +13,7 @@
 // IR Remote
 #define IRLED 11
 #define DELAY_TIME 7500
-#define INTERVAL_TIME 100
+#define INTERVAL_TIME 1000
 
 void setup() {
 	Serial.begin(9600);
@@ -77,7 +77,7 @@ void nextFrame() {
 void loop () {
 	int film = analogRead(FILM_PIN);
 //	Serial.println(film);
-	if(film > 270) {
+	if(film > 150) {
 		nextFrame();
 		captureFrame(1);	// here you can change how many Photos to make of every frame
 	}
